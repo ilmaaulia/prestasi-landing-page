@@ -1,0 +1,144 @@
+import React, { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
+import { fetchAchievements } from '../../redux/achievements/actions'
+import { Card, Row, Col, Image, ListGroup, Badge } from 'react-bootstrap'
+import { FaUserGraduate, FaBook, FaAward } from 'react-icons/fa'
+import { tagColors } from '../../constants'
+import { getData } from '../../utils/fetch'
+import Breadcrumbs from '../../components/Breadcrumb'
+import Loading from '../../components/Loading'
+
+const StudentDetailPage = () => {
+  const { id } = useParams()
+  const dispatch = useDispatch()
+
+  const achievements = useSelector((state) => state.achievements.data)
+  
+  const [student, setStudent] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  const fetchOneStudent = async () => {
+    const res = await getData(`/public/students/${id}`)
+    setStudent(res.data.data)
+  }
+
+  useEffect(() => {
+    fetchOneStudent()
+    dispatch(fetchAchievements(id))
+    setLoading(false)
+  }, [id, dispatch])
+
+  const getRelevantTags = () => {
+    const tagSet = new Set()
+    achievements.forEach((a) => {
+      if (a.activity_group) tagSet.add(a.activity_group)
+      if (a.activity_type) tagSet.add(a.activity_type)
+      if (a.achievement_type) tagSet.add(a.achievement_type)
+      if (a.competition_level) tagSet.add(a.competition_level)
+    })
+    return Array.from(tagSet)
+  }
+
+  return (
+    <>
+      <Breadcrumbs
+        secondLevelText="Mahasiswa Berprestasi"
+        secondLevelUrl={'/students'}
+        thirdLevelText={
+          student ? `${student.firstName} ${student.lastName}` : 'Detail'
+        }
+      />
+      <Row className="mt-4">
+        <Col md={5} className="mb-4">
+          <Card className="shadow-sm border-0">
+            <Card.Body>
+              <div className="text-center">
+                {student ? (
+                  <>
+                    <Image
+                      src={student.image?.name}
+                      alt="Foto Profil"
+                      roundedCircle
+                      style={{
+                        width: '150px',
+                        height: '150px',
+                        objectFit: 'cover',
+                      }}
+                    />
+                    <h2 className="mt-3 text-primary">{`${student.firstName} ${student.lastName}`}</h2>
+                  </>
+                ) : (
+                  <Loading />
+                )}
+              </div>
+              {student && (
+                <ListGroup variant="flush" className="mt-3">
+                  <ListGroup.Item className="d-flex align-items-center">
+                    <FaUserGraduate className="me-3 text-secondary" />{' '}
+                    {student.student_id}
+                  </ListGroup.Item>
+                  <ListGroup.Item className="d-flex align-items-center">
+                    <FaBook className="me-3 text-secondary" />{' '}
+                    {student.study_program}
+                  </ListGroup.Item>
+                </ListGroup>
+              )}
+            </Card.Body>
+          </Card>
+        </Col>
+
+        <Col md={7}>
+          <Card className="shadow-sm border-0 mb-3">
+            <Card.Body className="d-flex flex-column justify-content-between">
+              <Card.Title className="text-primary">
+                Ragam Prestasi Diraih
+              </Card.Title>
+              <div className="d-flex flex-wrap gap-2 mt-2">
+                {getRelevantTags().length > 0 ? (
+                  getRelevantTags().map((tag, i) => (
+                    <Badge key={i} bg={tagColors[i % tagColors.length]}>
+                      {tag}
+                    </Badge>
+                  ))
+                ) : (
+                  <p className="text-muted">-</p>
+                )}
+              </div>
+            </Card.Body>
+          </Card>
+          <Card className="shadow-sm border-0">
+            <Card.Body>
+              {loading ? (
+                <Loading />
+              ) : (
+                <>
+                  <Card.Title className="text-primary">Prestasi</Card.Title>
+                  <ListGroup variant="flush">
+                    {achievements && achievements.length > 0 ? (
+                      achievements.map((achievement, index) => (
+                        <ListGroup.Item
+                          key={index}
+                          className="d-flex align-items-center"
+                        >
+                          <FaAward className="me-3 text-secondary" />{' '}
+                          {achievement.name || 'Prestasi tidak diketahui'}
+                        </ListGroup.Item>
+                      ))
+                    ) : (
+                      <ListGroup.Item className="d-flex align-items-center">
+                        <span className="text-muted">Belum ada prestasi</span>
+                      </ListGroup.Item>
+                    )}
+                  </ListGroup>
+                </>
+              )}
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </>
+  )
+}
+
+export default StudentDetailPage
