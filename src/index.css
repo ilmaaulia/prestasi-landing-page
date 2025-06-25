@@ -17,15 +17,6 @@ a:active {
 }
 
 /* button */
-.btn-lift {
-  transition: transform 0.2s ease;
-}
-
-.btn-lift:hover,
-.btn-lift:focus {
-  transform: translateY(-2px);
-}
-
 .btn-primary {
   background-color: var(--bs-secondary) !important;
   border-color: var(--bs-secondary) !important;
@@ -128,11 +119,8 @@ a.navbar-brand {
   }
 }
 
-@media (max-width: 576px) {
+@media (max-width: 768px) {
   model-viewer {
-    height: 200px !important;
-  }
-  .display-4 {
-    font-size: 1.5rem !important;
+    display: none;
   }
 }
