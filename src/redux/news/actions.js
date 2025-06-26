@@ -5,6 +5,9 @@ import {
   SET_KEYWORD,
   SET_PAGE,
   SET_SORT,
+  START_FETCHING_LATEST_NEWS,
+  SUCCESS_FETCHING_LATEST_NEWS,
+  ERROR_FETCHING_LATEST_NEWS,
 } from './constants'
 
 import { getData } from '../../utils/fetch'
@@ -59,6 +62,18 @@ const fetchNews = () => {
   }
 }
 
+const fetchLatestNews = () => {
+  return async (dispatch) => {
+    dispatch({ type: START_FETCHING_LATEST_NEWS })
+    try {
+      const response = await getData('/public/newses?sort=date:desc&limit=3')
+      dispatch({ type: SUCCESS_FETCHING_LATEST_NEWS, news: response.data.data.data })
+    } catch (err) {
+      dispatch({ type: ERROR_FETCHING_LATEST_NEWS })
+    }
+  }
+}
+
 const setKeyword = (keyword) => {
   return {
     type: SET_KEYWORD,
@@ -85,6 +100,7 @@ export {
   successFetchingNews,
   errorFetchingNews,
   fetchNews,
+  fetchLatestNews,
   setKeyword,
   setPage,
   setSort,

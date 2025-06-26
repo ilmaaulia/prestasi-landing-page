@@ -5,6 +5,9 @@ import {
   SET_KEYWORD,
   SET_PAGE,
   SET_SORT,
+  START_FETCHING_LATEST_NEWS,
+  SUCCESS_FETCHING_LATEST_NEWS,
+  ERROR_FETCHING_LATEST_NEWS,
 } from './constants'
 
 const statuslist = {
@@ -22,6 +25,10 @@ const initialState = {
   limit: 10,
   pages: 1,
   sort: '',
+  latestNews: {
+    data: [],
+    status: statuslist.idle,
+  },
 }
 
 const reducer = (state = initialState, action) => {
@@ -38,6 +45,24 @@ const reducer = (state = initialState, action) => {
       status: statuslist.success,
       data: action.news,
       pages: action.pages,
+    }
+
+  case START_FETCHING_LATEST_NEWS:
+    return {
+      ...state,
+      latestNews: { ...state.latestNews, status: statuslist.process },
+    }
+
+  case SUCCESS_FETCHING_LATEST_NEWS:
+    return {
+      ...state,
+      latestNews: { data: action.news, status: statuslist.success },
+    }
+
+  case ERROR_FETCHING_LATEST_NEWS:
+    return {
+      ...state,
+      latestNews: { ...state.latestNews, status: statuslist.error },
     }
 
   case SET_KEYWORD:
@@ -57,7 +82,7 @@ const reducer = (state = initialState, action) => {
       ...state,
       sort: action.sort,
     }
-      
+
   default:
     return state
   }
