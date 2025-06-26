@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { Card, Row, Col, Image, Container } from 'react-bootstrap'
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 import { getData } from '../../utils/fetch'
 import Breadcrumbs from '../../components/Breadcrumb'
-import Loading from '../../components/Loading'
 
 const NewsDetailPage = () => {
   const { id } = useParams()
@@ -31,7 +32,14 @@ const NewsDetailPage = () => {
         <Row className="justify-content-center">
           <Col xs={12}>
             {loading ? (
-              <Loading />
+              <Card className="border-0 shadow-none bg-light">
+                <Card.Body className="p-0">
+                  <Skeleton height={40} width={300} className="mb-3" />
+                  <Skeleton height={20} width={180} className="mb-4" />
+                  <Skeleton height={300} className="mb-4 w-100 rounded" />
+                  <Skeleton count={6} height={18} className="mb-2" />
+                </Card.Body>
+              </Card>
             ) : !news ? (
               <div>Berita tidak ditemukan.</div>
             ) : (

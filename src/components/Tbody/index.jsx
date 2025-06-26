@@ -1,16 +1,21 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import Loading from '../Loading'
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 const Tbody = ({ data, display, status }) => {
   return (
     <tbody>
       {status === 'process' ? (
-        <tr>
-          <td colSpan={display.length}>
-            <Loading />
-          </td>
-        </tr>
+        Array.from({ length: 10 }).map((_, rowIdx) => (
+          <tr key={rowIdx}>
+            {display.map((_, colIdx) => (
+              <td key={colIdx}>
+                <Skeleton height={24} width={180} />
+              </td>
+            ))}
+          </tr>
+        ))
       ) : data.length ? (
         data.map((data, index) => {
           return (

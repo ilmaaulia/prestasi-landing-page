@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
+import { Card, Row, Col, ListGroup } from 'react-bootstrap'
 import { getData } from '../../utils/fetch'
 import { studentStudyProgram } from '../../constants'
-import Card from 'react-bootstrap/Card'
-import ListGroup from 'react-bootstrap/ListGroup'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 const AchievementsStats = () => {
   const [counts, setCounts] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -34,6 +34,8 @@ const AchievementsStats = () => {
         setCounts(countsByStudyProgram)
       } catch (err) {
         console.error(err)
+      } finally {
+        setLoading(false)
       }
     }
     fetchStudents()
@@ -48,7 +50,34 @@ const AchievementsStats = () => {
       <h1 className="fs-3 mb-3" data-aos="fade-up">
         Jumlah Prestasi Berdasarkan Program Studi
       </h1>
-      {counts.length > 0 ? (
+      {loading ? (
+        <Card className="bg-light border-0 mx-auto w-100" data-aos="zoom-in">
+          <Card.Body className="bg-white rounded-3 shadow-sm border-1 p-2 p-md-4">
+            <Row>
+              <Col xs={12} md={6} className="mb-3 mb-md-0">
+                <ListGroup variant="flush">
+                  {Array.from({ length: Math.ceil(studentStudyProgram.length / 2) }).map((_, idx) => (
+                    <ListGroup.Item key={idx}>
+                      <Skeleton height={24} width={180} className="mb-1" />
+                      <Skeleton height={16} width={100} />
+                    </ListGroup.Item>
+                  ))}
+                </ListGroup>
+              </Col>
+              <Col xs={12} md={6}>
+                <ListGroup variant="flush">
+                  {Array.from({ length: Math.floor(studentStudyProgram.length / 2) }).map((_, idx) => (
+                    <ListGroup.Item key={idx}>
+                      <Skeleton height={24} width={180} className="mb-1" />
+                      <Skeleton height={16} width={100} />
+                    </ListGroup.Item>
+                  ))}
+                </ListGroup>
+              </Col>
+            </Row>
+          </Card.Body>
+        </Card>
+      ) : counts.length > 0 ? (
         <Card className="bg-light border-0 mx-auto w-100" data-aos="zoom-in">
           <Card.Body className="bg-white rounded-3 shadow-sm border-1 p-2 p-md-4">
             <Row>
