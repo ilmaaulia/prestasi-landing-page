@@ -49,17 +49,12 @@ const fetchStudents = (status) => {
       
       let res = await debouncedFetchStudents('/public/students', params)
 
-      res.data.data.data.forEach((res) => {
-        res.student_name = `${res.firstName} ${res.lastName}`
-        res.achievements_count = res.achievements ? res.achievements.length : 0
-      })
-
       const students = res.data.data.data.map((student) => ({
         student_name: `${student.firstName} ${student.lastName}`,
         student_id: student.student_id,
         study_program: student.study_program,
-        achievements_count: student.achievements ? student.achievements.length : 0,
-        id: student.id, 
+        achievements_count: student.achievements_count,
+        id: student.id,
       }))
 
       const filteredStudents = students.filter(student => student.achievements_count > 0)
