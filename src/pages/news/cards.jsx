@@ -52,7 +52,7 @@ const Cards = ({ data, status, skeleton = 6 }) => {
                     onClick={() => navigate(`/news/detail/${data._id}`)}
                     style={{ cursor: 'pointer' }}
                   >
-                    {data.title}
+                    {data.title && truncate(data.title, 50)}
                   </Card.Title>
                   <Card.Text>
                     <span
