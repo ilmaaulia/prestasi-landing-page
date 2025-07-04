@@ -14,17 +14,12 @@ const AchievementsStats = () => {
       try {
         const res = await getData('/public/students')
 
-        const students = res.data.data.data.map((student) => ({
-          study_program: student.study_program,
-          achievements_count: student.achievements?.length || 0,
-        }))
-
-        const filteredStudents = students.filter(
-          (s) => s.achievements_count > 0,
+        const students = res.data.data.data.filter(
+          (student) => student.achievements_count > 0,
         )
 
         const countsByStudyProgram = studentStudyProgram.map((program) => {
-          const count = filteredStudents.filter(
+          const count = students.filter(
             (student) => student.study_program === program,
           ).length
 
