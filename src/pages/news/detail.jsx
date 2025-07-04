@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { Card, Row, Col, Image, Container } from 'react-bootstrap'
+import { Card, Row, Col, Image, Container, Modal } from 'react-bootstrap'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { getData } from '../../utils/fetch'
@@ -10,6 +10,7 @@ const NewsDetailPage = () => {
   const { id } = useParams()
   const [news, setNews] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [showModal, setShowModal] = useState(false)
 
   const fetchOneNews = async () => {
     const res = await getData(`/public/news/${id}`)
@@ -20,6 +21,14 @@ const NewsDetailPage = () => {
   useEffect(() => {
     fetchOneNews()
   }, [id])
+
+  const handleImageClick = () => {
+    setShowModal(true)
+  }
+
+  const handleCloseModal = () => {
+    setShowModal(false)
+  }
 
   return (
     <>
@@ -58,11 +67,12 @@ const NewsDetailPage = () => {
                     src={news.image?.name}
                     alt={news.title}
                     fluid
-                    className="mb-4 w-100 rounded"
+                    className="mb-4 w-100 rounded object-fit-cover"
                     style={{
-                      maxHeight: 300,
-                      objectFit: 'cover',
+                      maxHeight: 400,
+                      cursor: 'pointer',
                     }}
+                    onClick={handleImageClick}
                   />
                   <div
                     style={{
@@ -78,6 +88,17 @@ const NewsDetailPage = () => {
           </Col>
         </Row>
       </Container>
+
+      <Modal show={showModal} onHide={handleCloseModal} centered>
+        <Modal.Body>
+          <Image
+            src={news?.image?.name}
+            alt={news?.title}
+            fluid
+            className="w-100 rounded"
+          />
+        </Modal.Body>
+      </Modal>
     </>
   )
 }
